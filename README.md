@@ -10,13 +10,17 @@ uv sync
 
 ## Frontends
 
-### Run the CLI:
+### Run the CLI
 
 ```sh
 uv run python -m mvc.frontends.cli.main
 ```
 
-### Run the Web UI:
+You should see this in your Terminal:
+
+![](./img/frontend_cli.png)
+
+### Run the Web UI
 
 ```sh
 uv run chainlit run src/mvc/frontends/web/app.py -w
@@ -24,7 +28,19 @@ uv run chainlit run src/mvc/frontends/web/app.py -w
 
 - `-w` is for hot-reloading (automatic restart when code updates are saved)
 
-### Run the Telegram Bot:
+You should see this in your Browser at [`localhost:8000`](http://localhost:8000):
+
+![](./img/frontend_web_chainlit.png)
+
+
+### Run the Telegram Bot
+
+> Based on the ["From BotFather to 'Hello World'" Tutorial on Telegram](https://core.telegram.org/bots/tutorial).
+
+The Telegram Bot would look like this:
+
+![](./img/frontend_telegram_bot.png)
+
 
 #### 1) Create bot and get token
 
