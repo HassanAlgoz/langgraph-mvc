@@ -15,3 +15,9 @@ Run the CLI:
 ```sh
 uv run python -m mvc.frontends.cli.main
 ```
+
+Run the Web UI:
+
+```sh
+uv run chainlit run src/mvc/frontends/web/app.py -w
+```
