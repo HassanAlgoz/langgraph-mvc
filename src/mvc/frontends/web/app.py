@@ -4,49 +4,24 @@ from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AI
 from langchain_core.output_parsers import StrOutputParser
 
 from mvc.config import OPENROUTER_API_KEY, MODEL_NAME
+from mvc.model import Workflow
 from mvc.services.llm import new_llm
 
 
 @cl.on_chat_start
 async def on_chat_start():
-    # OpenRouter integration using standard ChatOpenAI
     llm = new_llm(
         model=MODEL_NAME,
         openrouter_api_key=OPENROUTER_API_KEY,
         streaming=True,
     )
-
-    # Modern LCEL
-    runnable = llm | StrOutputParser()
-    cl.user_session.set("runnable", runnable)
-
-    # Initialize state with 1 positional argument for SystemMessage
-    cl.user_session.set(
-        "messages",
-        [
-            SystemMessage(
-                "You're a very knowledgeable historian who provides accurate and eloquent answers to historical questions."
-            )
-        ],
-    )
-
+    workflow = Workflow(llm=llm)
+    cl.user_session.set("workflow", workflow)
 
 @cl.on_message
 async def on_message(message: cl.Message):
-    runnable: Runnable = cl.user_session.get("runnable")
-    messages: list[BaseMessage] = cl.user_session.get("messages")
-
-    # 1 positional argument for HumanMessage
-    messages.append(HumanMessage(message.content))
-
+    workflow: Workflow = cl.user_session.get("workflow")
     msg = cl.Message(content="")
-
-    # Thread tracking config
-    config: RunnableConfig = {"configurable": {"thread_id": cl.context.session.id}}
-
-    async for chunk in runnable.astream(messages, config=config):
+    async for chunk in workflow.astream(message.content):
         await msg.stream_token(chunk)
-
-    # 1 positional argument for AIMessage
-    messages.append(AIMessage(msg.content))
     await msg.send()
