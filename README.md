@@ -6,13 +6,65 @@ Demonstrates how one Agentic runtime backend ([`src/mvc/model.py`](src/mvc/model
 2. Web UI in the Browser
 3. Telegram Bot via Telegram App
 
-## Install Dependencies
+## Setup
+
+### 1. Clone
+
+```sh
+git clone git@github.com:HassanAlgoz/chatbot.git chatbot
+```
+
+or
+
+```sh
+git clone https://github.com/HassanAlgoz/chatbot.git chatbot
+```
+
+### 2. Install Dependencies
 
 ```sh
 uv sync
 ```
 
+### 3. Environment Variables
+
+```sh
+cp .env.example .env
+```
+
+- [Get `OPENROUTER_API_KEY`](https://openrouter.ai/workspaces/default/keys)
+- `MODLE_NAME=` [Select LLM](https://openrouter.ai/models?output_modalities=text)
+
+## What is MVC?
+
+In The MVC Design Pattern one decouples the how the interface looks from how it logically processes inputs. This is not always possible, because some features are inherently visual. But, most of the code can be decoupled for **reuse across frontends**, using this pattern.
+
+[](./img/mvc_design_pattern.png)
+
+## File Structure
+
+- `model.py` includes the workflow; the state of the program and the read-write operations
+  - Modify to change the LLM logic
+- `main.py` is the app's entrypoint
+  - Modify when you add new components
+- `config.py` ensures we have set all environment variables
+  - Modify when keys are modified in `.env`
+- `services/` is used for external I/O
+    - `services/llm.py`  is the openrouter provider for LLMs
+
+[Frontends](#frontends) file structure below.
+
 ## Frontends
+
+You notice we have `frontends/` folder (s for plural). In general, they control how the program looks and reacts to inputs, and how outputs are rendered (to the extent that the UI allows it).
+
+We have provided three frontends in this repository:
+
+Firstly the Command-line interface in [`frontends/cli/view.py`](src/mvc/frontends/cli/view.py). You'll notice it contains `import textual` which is a Terminal UI library.
+
+Secondly, the [`frontends/web/app.py`](src/mvc/frontends/web/app.py) which is a [chainlit](https://docs.chainlit.io/integrations/langchain) web application, ready-made for chatbots such as ours.
+
+Thirdly, the [`frontends/telegram/bot.py`](src/mvc/frontends/telegram/bot.py) to interface with the Telegram API and App. [Find setup instructions below](#run-the-telegram-bot).
 
 ### Run the CLI
 
@@ -88,3 +140,20 @@ uv run python -m mvc.frontends.telegram.main
 
 - The tutorial notes that Telegram does not store processed updates for you.
 - If your bot needs persistent state (users/settings/history), add storage (serialization/database).
+
+## Alternatives
+
+### A. JavaScript Libraries
+
+- [reachat](https://reachat.dev/docs)
+- [deep-chat](https://github.com/OvidijusParsiunas/deep-chat/tree/main)
+- [ChatUI | alibaba](https://github.com/alibaba/ChatUI)
+- [LlamaIndex ChatUI](https://ui.llamaindex.ai/)
+
+### B. Visual Builders
+
+- [Lang flow](https://docs.langflow.org/)
+- [Flowise AI](https://flowiseai.com/)
+- [n8n](https://n8n.io/ai-agents/)
+- [Voice Flow](https://www.voiceflow.com/)
+- [Angie](https://elementor.com/products/angie-ai-for-wordpress/)
